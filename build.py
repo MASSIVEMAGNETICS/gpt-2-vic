@@ -753,6 +753,8 @@ console.log('[HLHFM] Victor Background Service Active - Bloodline Sovereign');
         """Generate popup.js"""
         script = """// HLHFM Popup Interface Controller
 
+let notificationTimeout = null;
+
 document.addEventListener('DOMContentLoaded', async () => {
   await updateStats();
   
@@ -818,11 +820,21 @@ async function queryMemory() {
 }
 
 function showNotification(message) {
-  // Simple notification - could be enhanced
-  const original = document.getElementById('addBtn').textContent;
-  document.getElementById('addBtn').textContent = '✓ ' + message;
-  setTimeout(() => {
-    document.getElementById('addBtn').textContent = original;
+  // Clear any pending notification to avoid race conditions
+  if (notificationTimeout) {
+    clearTimeout(notificationTimeout);
+  }
+  
+  const btn = document.getElementById('addBtn');
+  const original = btn.dataset.originalText || btn.textContent;
+  if (!btn.dataset.originalText) {
+    btn.dataset.originalText = original;
+  }
+  
+  btn.textContent = '✓ ' + message;
+  notificationTimeout = setTimeout(() => {
+    btn.textContent = original;
+    notificationTimeout = null;
   }, 2000);
 }
 """
