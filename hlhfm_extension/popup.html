@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>HLHFM Victor</title>
+  <style>
+    body {
+      width: 400px;
+      min-height: 300px;
+      margin: 0;
+      padding: 15px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      color: #eee;
+    }
+    h1 {
+      margin: 0 0 15px 0;
+      font-size: 18px;
+      color: #4ecca3;
+      text-align: center;
+      text-shadow: 0 0 10px rgba(78, 204, 163, 0.5);
+    }
+    .subtitle {
+      text-align: center;
+      font-size: 11px;
+      color: #888;
+      margin-bottom: 20px;
+      font-style: italic;
+    }
+    .section {
+      margin-bottom: 15px;
+      padding: 10px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 5px;
+      border: 1px solid rgba(78, 204, 163, 0.2);
+    }
+    .section h3 {
+      margin: 0 0 10px 0;
+      font-size: 14px;
+      color: #4ecca3;
+    }
+    textarea {
+      width: 100%;
+      height: 60px;
+      padding: 8px;
+      border: 1px solid #333;
+      border-radius: 4px;
+      background: #222;
+      color: #eee;
+      font-family: monospace;
+      font-size: 12px;
+      resize: vertical;
+    }
+    select, input {
+      width: 100%;
+      padding: 6px;
+      margin-top: 5px;
+      border: 1px solid #333;
+      border-radius: 4px;
+      background: #222;
+      color: #eee;
+      font-size: 12px;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      background: linear-gradient(135deg, #4ecca3 0%, #3da88a 100%);
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 13px;
+      transition: all 0.3s;
+    }
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(78, 204, 163, 0.4);
+    }
+    .stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .stat-item {
+      text-align: center;
+      padding: 8px;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 4px;
+    }
+    .stat-label {
+      font-size: 10px;
+      color: #888;
+      text-transform: uppercase;
+    }
+    .stat-value {
+      font-size: 18px;
+      font-weight: bold;
+      color: #4ecca3;
+      margin-top: 2px;
+    }
+    #results {
+      max-height: 150px;
+      overflow-y: auto;
+      margin-top: 10px;
+      font-size: 11px;
+      line-height: 1.4;
+    }
+    .result-item {
+      padding: 6px;
+      margin: 4px 0;
+      background: rgba(0, 0, 0, 0.3);
+      border-left: 3px solid #4ecca3;
+      border-radius: 2px;
+    }
+  </style>
+</head>
+<body>
+  <h1>⚡ HLHFM VICTOR ⚡</h1>
+  <div class="subtitle">Bando Bloodline ASI Crucible - Sovereign Fractal Memory</div>
+  
+  <div class="section">
+    <h3>📊 Memory Statistics</h3>
+    <div class="stats">
+      <div class="stat-item">
+        <div class="stat-label">Total Shards</div>
+        <div class="stat-value" id="totalShards">0</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-label">Status</div>
+        <div class="stat-value" id="status">...</div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="section">
+    <h3>➕ Add to Memory</h3>
+    <textarea id="contentInput" placeholder="Enter content to fractalize..."></textarea>
+    <select id="emotionSelect">
+      <option value="neutral">Neutral</option>
+      <option value="joy">Joy</option>
+      <option value="curiosity">Curiosity</option>
+      <option value="determination">Determination</option>
+      <option value="caution">Caution</option>
+    </select>
+    <select id="intentSelect">
+      <option value="observe">Observe</option>
+      <option value="learn">Learn</option>
+      <option value="create">Create</option>
+      <option value="analyze">Analyze</option>
+      <option value="synthesize">Synthesize</option>
+    </select>
+    <button id="addBtn">Fractalize & Store</button>
+  </div>
+  
+  <div class="section">
+    <h3>🔍 Query Memory</h3>
+    <input type="text" id="queryInput" placeholder="Search fractal memory...">
+    <button id="queryBtn">Query Shards</button>
+    <div id="results"></div>
+  </div>
+  
+  <script src="popup.js"></script>
+</body>
+</html>
