@@ -1,5 +1,35 @@
 **Status:** Archive (code is provided as-is, no updates expected)
 
+## 🆕 NEW: Standalone Learning Chat Interface
+
+**GPT-2-VIC now includes a complete learning chat system with:**
+- 🧠 **Critical Thinking Synthesis** - Transparent reasoning chains
+- 💧 **Liquid Weights** - Adaptive learning from feedback
+- 📚 **Source Citations** - References conversation history
+- 🌐 **Beautiful Web UI** - Modern responsive interface
+
+**Quick Start:**
+```bash
+# Install dependencies
+pip install -r requirements.txt
+
+# Option 1: Web Interface (Recommended)
+python chat_server.py
+# Then open http://localhost:5000
+
+# Option 2: Command Line Interface
+python src/chat_interface.py
+
+# Option 3: Quick Launcher
+./start_chat.sh
+```
+
+📖 See [CHAT_README.md](./CHAT_README.md) for complete documentation.
+
+![Chat Interface](https://github.com/user-attachments/assets/1623a830-c5f2-44c8-9c47-63eeeb1c6e91)
+
+---
+
 # gpt-2
 
 Code and models from the paper ["Language Models are Unsupervised Multitask Learners"](https://d4mucfpksywv.cloudfront.net/better-language-models/language-models.pdf).
