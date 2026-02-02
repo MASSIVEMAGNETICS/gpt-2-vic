@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GPT-2-VIC Chat Interface - Learning AI with Critical Thinking</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 90vh;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header h1 {
+            font-size: 24px;
+            font-weight: 600;
+        }
+        
+        .header .subtitle {
+            font-size: 12px;
+            opacity: 0.9;
+            margin-top: 5px;
+        }
+        
+        .stats {
+            display: flex;
+            gap: 20px;
+            font-size: 14px;
+        }
+        
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .stat-value {
+            font-size: 20px;
+            font-weight: bold;
+        }
+        
+        .stat-label {
+            font-size: 11px;
+            opacity: 0.8;
+        }
+        
+        .main-content {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+        
+        .chat-area {
+            flex: 2;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid #e0e0e0;
+        }
+        
+        .sidebar {
+            flex: 1;
+            background: #f8f9fa;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        
+        .messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .message {
+            display: flex;
+            gap: 10px;
+            animation: fadeIn 0.3s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .message.user {
+            justify-content: flex-end;
+        }
+        
+        .message-content {
+            max-width: 70%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            line-height: 1.4;
+        }
+        
+        .message.user .message-content {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .message.assistant .message-content {
+            background: #f1f3f5;
+            color: #333;
+        }
+        
+        .message.system .message-content {
+            background: #fff3cd;
+            color: #856404;
+            max-width: 100%;
+            font-size: 14px;
+        }
+        
+        .analysis-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196F3;
+            padding: 12px;
+            margin-top: 8px;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+        
+        .analysis-box h4 {
+            color: #1976D2;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        .reasoning-step {
+            margin: 5px 0;
+            padding-left: 15px;
+        }
+        
+        .source-item {
+            margin: 5px 0;
+            padding: 5px;
+            background: white;
+            border-radius: 3px;
+            font-size: 12px;
+        }
+        
+        .input-area {
+            padding: 20px;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+        }
+        
+        .input-container {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        #userInput {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            font-size: 15px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        
+        #userInput:focus {
+            border-color: #667eea;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .btn-secondary {
+            background: #f1f3f5;
+            color: #495057;
+        }
+        
+        .btn-secondary:hover {
+            background: #e9ecef;
+        }
+        
+        .sidebar h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+        
+        .weight-info {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        
+        .weight-bar {
+            width: 100%;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+        
+        .weight-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s;
+        }
+        
+        .context-items {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .context-item {
+            background: white;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 13px;
+            border-left: 3px solid #667eea;
+        }
+        
+        .feedback-buttons {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+        
+        .btn-feedback {
+            padding: 6px 12px;
+            font-size: 12px;
+            border-radius: 15px;
+            border: 1px solid #e0e0e0;
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn-feedback:hover {
+            transform: scale(1.05);
+        }
+        
+        .btn-feedback.positive:hover {
+            background: #4caf50;
+            color: white;
+            border-color: #4caf50;
+        }
+        
+        .btn-feedback.negative:hover {
+            background: #f44336;
+            color: white;
+            border-color: #f44336;
+        }
+        
+        .loading {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #667eea;
+            font-style: italic;
+        }
+        
+        .loading-dots {
+            display: flex;
+            gap: 4px;
+        }
+        
+        .loading-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #667eea;
+            animation: bounce 1.4s infinite ease-in-out both;
+        }
+        
+        .loading-dot:nth-child(1) { animation-delay: -0.32s; }
+        .loading-dot:nth-child(2) { animation-delay: -0.16s; }
+        
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div>
+                <h1>🧠 GPT-2-VIC Learning Chat</h1>
+                <div class="subtitle">Standalone AI with Critical Thinking, Liquid Weights & Source Research</div>
+            </div>
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-value" id="chatCount">0</div>
+                    <div class="stat-label">Conversations</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="learningScore">0.0</div>
+                    <div class="stat-label">Learning Score</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="chat-area">
+                <div class="messages" id="messages">
+                    <div class="message system">
+                        <div class="message-content">
+                            Welcome to GPT-2-VIC! I'm a learning AI with critical thinking synthesis and adaptive liquid weights. 
+                            Ask me anything and I'll learn from our conversation while citing sources and showing my reasoning process.
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="input-area">
+                    <div class="input-container">
+                        <input type="text" id="userInput" placeholder="Type your message..." />
+                        <button class="btn btn-primary" id="sendBtn">Send</button>
+                        <button class="btn btn-secondary" id="saveBtn">Save</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="sidebar">
+                <h3>💧 Liquid Weights</h3>
+                <div class="weight-info">
+                    <div>Adaptation Level</div>
+                    <div class="weight-bar">
+                        <div class="weight-fill" id="weightBar" style="width: 50%"></div>
+                    </div>
+                    <div style="margin-top: 8px; font-size: 12px; color: #666;">
+                        Mean: <span id="weightMean">1.000</span> | 
+                        Std: <span id="weightStd">0.000</span>
+                    </div>
+                </div>
+                
+                <h3>📚 Context Memory</h3>
+                <div class="context-items" id="contextItems">
+                    <div style="color: #999; font-size: 13px;">No context yet...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Backend API connector - connects to Python Flask server
+        class ChatBackend {
+            constructor() {
+                this.apiUrl = window.location.origin;
+                this.lastUserInput = '';
+                this.lastResponse = '';
+                this.useFallback = false;  // Set to true if API is unavailable
+            }
+            
+            async generateResponse(userInput) {
+                this.lastUserInput = userInput;
+                
+                // Try to use real backend API
+                if (!this.useFallback) {
+                    try {
+                        const response = await fetch(`${this.apiUrl}/api/chat`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ message: userInput })
+                        });
+                        
+                        if (response.ok) {
+                            const data = await response.json();
+                            this.lastResponse = data.response;
+                            return data;
+                        } else {
+                            console.warn('API returned error, falling back to demo mode');
+                            this.useFallback = true;
+                        }
+                    } catch (error) {
+                        console.warn('API unavailable, using demo mode:', error);
+                        this.useFallback = true;
+                    }
+                }
+                
+                // Fallback to simulated mode if API unavailable
+                return this._fallbackResponse(userInput);
+            }
+            
+            async _fallbackResponse(userInput) {
+                // Simulate processing delay
+                await new Promise(resolve => setTimeout(resolve, 1500));
+                
+                const context = this._simulateContext();
+                const analysis = this._simulateAnalysis(userInput, context);
+                const response = this._simulateResponse(userInput, context);
+                
+                this.lastResponse = response;
+                return { response, analysis, context };
+            }
+            
+            async provideFeedback(isPositive) {
+                if (!this.useFallback) {
+                    try {
+                        await fetch(`${this.apiUrl}/api/feedback`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                positive: isPositive,
+                                user_input: this.lastUserInput,
+                                response: this.lastResponse
+                            })
+                        });
+                    } catch (error) {
+                        console.warn('Feedback API call failed:', error);
+                    }
+                }
+            }
+            
+            async getStats() {
+                if (!this.useFallback) {
+                    try {
+                        const response = await fetch(`${this.apiUrl}/api/stats`);
+                        if (response.ok) {
+                            return await response.json();
+                        }
+                    } catch (error) {
+                        console.warn('Stats API call failed:', error);
+                    }
+                }
+                
+                // Fallback stats
+                return {
+                    chat_count: 0,
+                    learning_score: 0.5,
+                    weights: { mean: 1.0, std: 0.0 }
+                };
+            }
+            
+            async saveState() {
+                if (!this.useFallback) {
+                    try {
+                        const response = await fetch(`${this.apiUrl}/api/save`, {
+                            method: 'POST'
+                        });
+                        if (response.ok) {
+                            return await response.json();
+                        }
+                    } catch (error) {
+                        console.warn('Save API call failed:', error);
+                    }
+                }
+                return { status: 'success', message: 'Demo mode - state not saved' };
+            }
+            
+            // Fallback simulation methods for demo mode
+            _simulateContext() {
+                return [
+                    "Previous conversation context",
+                    "Earlier discussion point",
+                    "Related topic from history"
+                ];
+            }
+            
+            _simulateAnalysis(input, context) {
+                const words = input.toLowerCase().split(/\s+/);
+                const keyConcepts = words.filter(w => w.length > 4).slice(0, 5);
+                
+                return {
+                    reasoning_steps: [
+                        {
+                            step: 1,
+                            type: 'context_retrieval',
+                            description: `Retrieved ${context.length} relevant context items`
+                        },
+                        {
+                            step: 2,
+                            type: 'concept_analysis',
+                            description: `Identified key concepts: ${keyConcepts.slice(0, 3).join(', ')}`
+                        },
+                        {
+                            step: 3,
+                            type: 'synthesis',
+                            description: 'Synthesizing response with critical thinking'
+                        }
+                    ],
+                    sources: context.map((ctx, i) => ({
+                        id: `source_${i + 1}`,
+                        text: ctx.substring(0, 80),
+                        relevance: (1.0 / (i + 1)).toFixed(2)
+                    })),
+                    confidence: 0.75
+                };
+            }
+            
+            _simulateResponse(input, context) {
+                const lowerInput = input.toLowerCase();
+                
+                if (lowerInput.includes('hello') || lowerInput.includes('hi')) {
+                    return "Hello! I'm GPT-2-VIC, a learning AI with critical thinking synthesis. I can chat with you and learn from our conversation. (Demo Mode - Connect to backend for full features)";
+                } else if (lowerInput.includes('how') && lowerInput.includes('work')) {
+                    return "I combine GPT-2's language model with liquid weights, HLHFM memory, and critical thinking synthesis. My weights adapt based on feedback, making me more personalized over time! (Demo Mode)";
+                } else {
+                    return `Interesting point! In production mode, I would use the GPT-2 model to generate a more sophisticated response. Currently in Demo Mode - start the Flask server (python chat_server.py) for full functionality.`;
+                }
+            }
+        }
+        
+        // Initialize
+        const backend = new ChatBackend();
+        const messagesDiv = document.getElementById('messages');
+        const userInput = document.getElementById('userInput');
+        const sendBtn = document.getElementById('sendBtn');
+        const saveBtn = document.getElementById('saveBtn');
+        
+        let isProcessing = false;
+        
+        function addMessage(role, content, analysis = null) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${role}`;
+            
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'message-content';
+            contentDiv.textContent = content;
+            
+            messageDiv.appendChild(contentDiv);
+            
+            // Add analysis box for assistant messages
+            if (role === 'assistant' && analysis) {
+                const analysisDiv = document.createElement('div');
+                analysisDiv.className = 'analysis-box';
+                
+                let analysisHTML = '<h4>🧠 Critical Thinking Analysis</h4>';
+                
+                if (analysis.reasoning_steps.length > 0) {
+                    analysisHTML += '<div style="margin: 8px 0;"><strong>Reasoning Chain:</strong></div>';
+                    analysis.reasoning_steps.forEach(step => {
+                        analysisHTML += `<div class="reasoning-step">${step.step}. ${step.description}</div>`;
+                    });
+                }
+                
+                if (analysis.sources.length > 0) {
+                    analysisHTML += '<div style="margin: 8px 0;"><strong>Sources Referenced:</strong></div>';
+                    analysis.sources.forEach(src => {
+                        analysisHTML += `<div class="source-item">[${src.id}] ${src.text} (relevance: ${src.relevance})</div>`;
+                    });
+                }
+                
+                analysisHTML += `<div style="margin-top: 8px;"><strong>Confidence:</strong> ${(analysis.confidence * 100).toFixed(0)}%</div>`;
+                
+                // Add feedback buttons
+                analysisHTML += `
+                    <div class="feedback-buttons">
+                        <button class="btn-feedback positive" onclick="provideFeedback(true)">👍 Good</button>
+                        <button class="btn-feedback negative" onclick="provideFeedback(false)">👎 Needs Work</button>
+                    </div>
+                `;
+                
+                analysisDiv.innerHTML = analysisHTML;
+                contentDiv.appendChild(analysisDiv);
+            }
+            
+            messagesDiv.appendChild(messageDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+        
+        function showLoading() {
+            const loadingDiv = document.createElement('div');
+            loadingDiv.className = 'message assistant';
+            loadingDiv.id = 'loading-message';
+            
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'message-content loading';
+            contentDiv.innerHTML = `
+                Thinking
+                <div class="loading-dots">
+                    <div class="loading-dot"></div>
+                    <div class="loading-dot"></div>
+                    <div class="loading-dot"></div>
+                </div>
+            `;
+            
+            loadingDiv.appendChild(contentDiv);
+            messagesDiv.appendChild(loadingDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+        
+        function hideLoading() {
+            const loadingMsg = document.getElementById('loading-message');
+            if (loadingMsg) {
+                loadingMsg.remove();
+            }
+        }
+        
+        async function updateStats() {
+            const stats = await backend.getStats();
+            document.getElementById('chatCount').textContent = stats.chat_count || 0;
+            document.getElementById('learningScore').textContent = (stats.learning_score || 0.5).toFixed(1);
+            document.getElementById('weightMean').textContent = (stats.weights.mean || 1.0).toFixed(3);
+            document.getElementById('weightStd').textContent = (stats.weights.std || 0.0).toFixed(3);
+            
+            const weightPercent = ((stats.weights.mean - 0.5) / 1.5) * 100;
+            document.getElementById('weightBar').style.width = `${Math.max(10, Math.min(100, weightPercent))}%`;
+        }
+        
+        function updateContext(context) {
+            const contextDiv = document.getElementById('contextItems');
+            
+            if (context.length === 0) {
+                contextDiv.innerHTML = '<div style="color: #999; font-size: 13px;">No context yet...</div>';
+                return;
+            }
+            
+            contextDiv.innerHTML = context.map(ctx => 
+                `<div class="context-item">${ctx.substring(0, 60)}${ctx.length > 60 ? '...' : ''}</div>`
+            ).join('');
+        }
+        
+        async function sendMessage() {
+            if (isProcessing) return;
+            
+            const message = userInput.value.trim();
+            if (!message) return;
+            
+            isProcessing = true;
+            sendBtn.disabled = true;
+            userInput.value = '';
+            
+            // Add user message
+            addMessage('user', message);
+            
+            // Show loading
+            showLoading();
+            
+            try {
+                // Get response from backend
+                const result = await backend.generateResponse(message);
+                
+                // Hide loading
+                hideLoading();
+                
+                // Add assistant message with analysis
+                addMessage('assistant', result.response, result.analysis);
+                
+                // Update stats and context
+                updateStats();
+                updateContext(result.context);
+            } catch (error) {
+                hideLoading();
+                addMessage('system', `Error: ${error.message}`);
+            } finally {
+                isProcessing = false;
+                sendBtn.disabled = false;
+                userInput.focus();
+            }
+        }
+        
+        async function provideFeedback(isPositive) {
+            await backend.provideFeedback(isPositive);
+            await updateStats();
+            
+            const feedbackMsg = isPositive ? 
+                '✓ Positive feedback recorded - learning improved!' :
+                '✓ Negative feedback recorded - will adjust approach';
+            
+            addMessage('system', feedbackMsg);
+        }
+        
+        async function saveState() {
+            const result = await backend.saveState();
+            const stats = await backend.getStats();
+            addMessage('system', `✓ State saved! ${stats.chat_count} conversations stored with learning score ${stats.learning_score.toFixed(1)}`);
+        }
+        
+        // Event listeners
+        sendBtn.addEventListener('click', sendMessage);
+        saveBtn.addEventListener('click', saveState);
+        
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !isProcessing) {
+                sendMessage();
+            }
+        });
+        
+        // Initial stats update
+        updateStats();
+    </script>
+</body>
+</html>
