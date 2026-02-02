@@ -246,15 +246,20 @@ class ChatLearningSystem:
             self.sess = None
     
     def _create_embedding(self, text: str) -> np.ndarray:
-        """Create simple embedding from text"""
-        # Simple character-based embedding
+        """Create simple embedding from text using hash-based approach"""
+        # Use hash-based approach for more uniform distribution
         embedding = np.zeros(self.dimension)
-        for i, char in enumerate(text[:self.dimension]):
-            embedding[i % self.dimension] += ord(char) / 255.0
-        return embedding / (np.linalg.norm(embedding) + 1e-10)
+        for i, char in enumerate(text):
+            # Hash character with position for better distribution
+            hash_val = hash(f"{char}_{i}") % self.dimension
+            embedding[hash_val] += 1.0
+        
+        # Add length normalization
+        embedding = embedding / (np.linalg.norm(embedding) + 1e-10)
+        return embedding
     
-    def _retrieve_context(self, query: str, top_k: int = 3) -> List[str]:
-        """Retrieve relevant context from chat history"""
+    def retrieve_context(self, query: str, top_k: int = 3) -> List[str]:
+        """Retrieve relevant context from chat history (public method)"""
         if not self.chat_history:
             return []
         
@@ -270,6 +275,10 @@ class ChatLearningSystem:
         # Sort by similarity and return top_k
         similarities.sort(reverse=True)
         return [msg for _, _, msg in similarities[:top_k]]
+    
+    def _retrieve_context(self, query: str, top_k: int = 3) -> List[str]:
+        """Internal context retrieval (deprecated - use retrieve_context)"""
+        return self.retrieve_context(query, top_k)
     
     def learn_from_interaction(self, user_input: str, response: str, feedback: float = 0.5):
         """
@@ -303,8 +312,7 @@ class ChatLearningSystem:
                 self.hlhfm.add_fractal_content(
                     combined_embedding,
                     emotion=emotion,
-                    intent=intent,
-                    metadata={'user_input': user_input[:100], 'response': response[:100]}
+                    intent=intent
                 )
             except Exception as e:
                 print(f"! HLHFM learning failed: {e}")
@@ -319,7 +327,7 @@ class ChatLearningSystem:
         Returns: (response_text, critical_analysis)
         """
         # Retrieve relevant context
-        context = self._retrieve_context(user_input, top_k=3)
+        context = self.retrieve_context(user_input, top_k=3)
         
         # Generate critical thinking analysis
         analysis = self.critical_thinking.analyze(user_input, context)

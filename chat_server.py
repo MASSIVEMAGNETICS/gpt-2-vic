@@ -48,8 +48,8 @@ def chat():
         system = get_chat_system()
         response, analysis = system.generate_response(user_input)
         
-        # Get context
-        context = system._retrieve_context(user_input, top_k=3)
+        # Get context using public method
+        context = system.retrieve_context(user_input, top_k=3)
         
         return jsonify({
             'response': response,
@@ -120,4 +120,6 @@ if __name__ == '__main__':
     print("Open your browser to: http://localhost:5000")
     print("=" * 70)
     
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    # Use debug mode only if explicitly requested via environment variable
+    debug_mode = os.environ.get('FLASK_DEBUG', '').lower() == 'true'
+    app.run(host='0.0.0.0', port=5000, debug=debug_mode)
